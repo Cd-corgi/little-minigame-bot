@@ -65,9 +65,11 @@ class LoadGame {
                 var result = this.compareCards(getStats.currentCard)
                 switch (result) {
                     case 0:
+                        prompt = `The CPU's selected card overpass your card number!`
                         getStats.player.life--
                         break;
                     case 1:
+                        prompt = `Your Selected card overpass the CPU's card number!`
                         getStats.cpu.life--
                         break;
                     default:
@@ -83,6 +85,10 @@ class LoadGame {
                     collector.stop()
                     this.client.players.delete(interaction.user.id)
                 } else {
+                    if (getStats.player.cards.length < 1 && getStats.cpu.cards.length < 1) {
+                        let regenerateCards = await createCards()
+                        getStats.player.cards = regenerateCards.player; getStats.cpu.cards = regenerateCards.cpu;
+                    }
                     i.editReply({
                         content: `${prompt.length >= 1 ? `${prompt}` : "_ _"}`,
                         embeds: [new EmbedBuilder().setTitle(`A Simple Card Game`).setThumbnail(interaction.user.displayAvatarURL()).addFields({ name: `${interaction.user.username} Cards`, value: getStats.player.cards.length < 1 ? "No cards left." : `🃏`.repeat(getStats.player.cards.length), inline: true }, { name: `Lives`, value: `\`${getStats.player.life}\` ❤`, inline: true }, { name: `Desk`, value: `${getStats.currentCard.player.length < 1 ? "🚫 🃏" : `${getStats.currentCard.player} 🃏`} | ${getStats.currentCard.cpu.length < 1 ? "🃏 🚫" : `🃏 ${getStats.currentCard.cpu}`}` }, { name: `CPU's Cards`, value: getStats.cpu.cards.length >= 1 ? `🃏`.repeat(getStats.cpu.cards.length) : "No cards left", inline: true }, { name: `Lives`, value: `\`${getStats.cpu.life}\` ❤`, inline: true },)],
