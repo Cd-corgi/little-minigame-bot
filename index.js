@@ -12,6 +12,7 @@ client.on('shardError', error => { console.error(`[SHARD ALARM] ${error}`); cons
 
 client.commands = new Discord.Collection();
 client.players = new Discord.Collection();
+client.tts = new Discord.Collection();
 
 fs.readdir("./src/events", (err, files) => {
     if (err) console.error;

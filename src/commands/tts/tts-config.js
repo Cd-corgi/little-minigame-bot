@@ -18,7 +18,7 @@ module.exports = {
         const rowOption = new ActionRowBuilder()
             .addComponents(new ButtonBuilder().setCustomId("autojoin").setLabel("Auto-join").setStyle(await checkUser.joinWhenUserJoin == false ? ButtonStyle.Danger : ButtonStyle.Success)).addComponents(new ButtonBuilder().setCustomId("close").setLabel(`Close menu`).setStyle(ButtonStyle.Danger))
 
-        let msg = await interaction.reply({ embeds: [new EmbedBuilder().setTitle(`TTS Config`).setDescription(`Setting up your personal settings to the bot!`).setColor("Blue").setThumbnail(client.user.displayAvatarURL()).setTimestamp().setFooter({ text: interaction.user.username, iconURL: interaction.user.displayAvatarURL() })], components: [rowOption, rowLang] })
+        let msg = await interaction.reply({ embeds: [new EmbedBuilder().setTitle(`TTS Config`).setDescription(`Setting up your personal settings to the bot! (The output channel will be the Voice Channel Chat!)`).setColor("Blue").setThumbnail(client.user.displayAvatarURL()).setTimestamp().setFooter({ text: interaction.user.username, iconURL: interaction.user.displayAvatarURL() })], components: [rowOption, rowLang] })
 
         let filter = i => i.user.id == interaction.user.id
 

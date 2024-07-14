@@ -16,7 +16,7 @@ module.exports = async (client, oldS, newS) => {
         if (findUser) {
             if (findUser.joinWhenUserJoin) {
                 voiceCon = joinVoiceChannel({ channelId: getChan.id, guildId: getGuild.id, adapterCreator: getChan.guild.voiceAdapterCreator });
-                
+
                 switch (findUser.lang) {
                     case "es-ES":
                         talk = dtts.getVoiceStream("Me he unido por tu configuración personal.", "es-ES", 125)
@@ -34,6 +34,11 @@ module.exports = async (client, oldS, newS) => {
 
                 voiceCon.subscribe(audioPlayer)
                 audioPlayer.play(audioRes)
+                try {
+                    client.tts.set(getChan.id, getChan)
+                } catch (error) {
+                    console.log(error)
+                }
             } else {
                 return
             }
@@ -45,9 +50,7 @@ module.exports = async (client, oldS, newS) => {
             const connection = getVoiceConnection(newS.guild.id)
             try {
                 connection.disconnect();
-            } catch (error) {
-                console.log(error)
-            }
+            } catch (error) { }
         }
     }
 }
