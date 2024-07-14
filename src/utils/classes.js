@@ -46,7 +46,7 @@ class LoadGame {
             playerRow.components = []
             if (getStats.player.cards.length > 1) {
                 getStats.player.cards.splice(choiceidX, 1)
-                getStats.player.cards.forEach((x, i) => { playerRow.addComponents(new ButtonBuilder().setCustomId(`c${i}`).setLabel(`${x == 11 ? '❤' : x == 12 ? '💖' : x == 13 ? '💝' : x} 🃏`).setStyle(ButtonStyle.Secondary)) })
+                getStats.player.cards.length >= 1 ? getStats.player.cards.forEach((x, i) => { playerRow.addComponents(new ButtonBuilder().setCustomId(`c${i}`).setLabel(`${x == 11 ? '❤' : x == 12 ? '💖' : x == 13 ? '💝' : x} 🃏`).setStyle(ButtonStyle.Secondary)) }) : playerRow.components = []
                 i.editReply({ content: `_ _`, embeds: [new EmbedBuilder().setTitle(`A Simple Card Game`).setThumbnail(interaction.user.displayAvatarURL()).addFields({ name: `${interaction.user.username} Cards`, value: getStats.player.cards.length < 1 ? "No cards left." : `🃏`.repeat(getStats.player.cards.length), inline: true }, { name: `Lives`, value: `\`${getStats.player.life}\` ❤`, inline: true }, { name: `Desk`, value: `${getStats.currentCard.player.length < 1 ? "🚫 🃏" : `${getStats.currentCard.player} 🃏`} | ${getStats.currentCard.cpu.length < 1 ? "🃏 🚫" : `🃏 ${getStats.currentCard.cpu}`}` }, { name: `CPU's Cards`, value: getStats.cpu.cards.length >= 1 ? `🃏`.repeat(getStats.cpu.cards.length) : "No cards left", inline: true }, { name: `Lives`, value: `\`${getStats.cpu.life}\` ❤`, inline: true },)], components: [] })
             } else {
                 getStats.player.cards = []
@@ -82,17 +82,24 @@ class LoadGame {
                         embeds: [new EmbedBuilder().setTitle(`A Simple Card Game`).setThumbnail(interaction.user.displayAvatarURL()).addFields({ name: `${interaction.user.username} Cards`, value: getStats.player.cards.length < 1 ? "No cards left." : `🃏`.repeat(getStats.player.cards.length), inline: true }, { name: `Lives`, value: `\`${getStats.player.life}\` ❤`, inline: true }, { name: `Desk`, value: `${getStats.currentCard.player.length < 1 ? "🚫 🃏" : `${getStats.currentCard.player} 🃏`} | ${getStats.currentCard.cpu.length < 1 ? "🃏 🚫" : `🃏 ${getStats.currentCard.cpu}`}` }, { name: `CPU's Cards`, value: getStats.cpu.cards.length >= 1 ? `🃏`.repeat(getStats.cpu.cards.length) : "No cards left", inline: true }, { name: `Lives`, value: `\`${getStats.cpu.life}\` ❤`, inline: true },)],
                         components: []
                     })
+                    let getPlayer = await players.findOne({ userId: i.user.id })
+                    if (getStats.player.life < 1) {
+                        await players.findOneAndUpdate({ userId: i.user.id }, { "stats.loses": getPlayer.stats.loses + 1 })
+                    } else if (getStats.cpu.life < 1) {
+                        await players.findOneAndUpdate({ userId: i.user.id }, { "stats.wins": getPlayer.stats.wins + 1 })
+                    }
                     collector.stop()
                     this.client.players.delete(interaction.user.id)
                 } else {
                     if (getStats.player.cards.length < 1 && getStats.cpu.cards.length < 1) {
                         let regenerateCards = await createCards()
                         getStats.player.cards = regenerateCards.player; getStats.cpu.cards = regenerateCards.cpu;
+                        getStats.player.cards.length >= 1 ? getStats.player.cards.forEach((x, i) => { playerRow.addComponents(new ButtonBuilder().setCustomId(`c${i}`).setLabel(`${x == 11 ? '❤' : x == 12 ? '💖' : x == 13 ? '💝' : x} 🃏`).setStyle(ButtonStyle.Secondary)) }) : playerRow.components = []
                     }
                     i.editReply({
                         content: `${prompt.length >= 1 ? `${prompt}` : "_ _"}`,
                         embeds: [new EmbedBuilder().setTitle(`A Simple Card Game`).setThumbnail(interaction.user.displayAvatarURL()).addFields({ name: `${interaction.user.username} Cards`, value: getStats.player.cards.length < 1 ? "No cards left." : `🃏`.repeat(getStats.player.cards.length), inline: true }, { name: `Lives`, value: `\`${getStats.player.life}\` ❤`, inline: true }, { name: `Desk`, value: `${getStats.currentCard.player.length < 1 ? "🚫 🃏" : `${getStats.currentCard.player} 🃏`} | ${getStats.currentCard.cpu.length < 1 ? "🃏 🚫" : `🃏 ${getStats.currentCard.cpu}`}` }, { name: `CPU's Cards`, value: getStats.cpu.cards.length >= 1 ? `🃏`.repeat(getStats.cpu.cards.length) : "No cards left", inline: true }, { name: `Lives`, value: `\`${getStats.cpu.life}\` ❤`, inline: true },)],
-                        components: [playerRow]
+                        components: playerRow.components.length >= 1 ? [playerRow] : []
                     })
                     collector.resetTimer()
                 }

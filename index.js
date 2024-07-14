@@ -2,6 +2,9 @@ const Discord = require('discord.js')
 const client = new Discord.Client({ intents: [3276543] })
 const { token, id } = require('./src/config/config.json')
 const fs = require('fs')
+const dtts = require('discord-tts')
+const voice = require('@discordjs/voice')
+
 require('./src/utils/mongoose')();
 
 process.on('unhandledRejection', error => { console.error("\x1b[41m", `[UNHANDLED ALARM] ${error}`, "\x1b[0m"); console.log(error) });
