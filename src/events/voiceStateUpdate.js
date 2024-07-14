@@ -49,7 +49,13 @@ module.exports = async (client, oldS, newS) => {
         if (findUser) {
             const connection = getVoiceConnection(newS.guild.id)
             try {
-                connection.disconnect();
+                client.tts.delete(newS.channelId)
+                if (connection) {
+                    connection.disconnect();
+                } else {
+                    const connection2 = getVoiceConnection(oldS.guild.id)
+                    connection2.destroy();
+                }
             } catch (error) { }
         }
     }
