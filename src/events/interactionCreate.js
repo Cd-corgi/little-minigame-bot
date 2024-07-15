@@ -28,6 +28,16 @@ module.exports = async (client, interaction) => {
                 ephemeral: true
             })
         }
+        if (slashCmd.inVoiceChannel && !interaction.member.voice.channel) {
+            return interaction.reply({
+                embeds: [
+                    new Discord.EmbedBuilder()
+                        .setDescription(`You should be in a \`Voice Channel\` first`)
+                        .setColor(Discord.Colors.Yellow)
+                ],
+                ephemeral: true
+            })
+        }
         try {
             await slashCmd.run(client, interaction)
         } catch (error) {

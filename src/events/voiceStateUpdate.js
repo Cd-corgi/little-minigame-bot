@@ -28,6 +28,12 @@ module.exports = async (client, oldS, newS) => {
                     case "en-US":
                         talk = dtts.getVoiceStream("I joined because of your personal settings.", "en-US", 125)
                         break;
+                    case "ja-JP":
+                        talk = dtts.getVoiceStream("あなたの個人的な設定のため、私は参加しました。", "ja-JP", 125)
+                        break;
+                    case "ru-RU":
+                        talk = dtts.getVoiceStream("Я присоединился из-за вашей личной конфигурации.", "ru-RU", 125)
+                        break;
                 }
 
                 voiceCon = await entersState(voiceCon, VoiceConnectionStatus.Connecting, 5_000);
@@ -36,7 +42,7 @@ module.exports = async (client, oldS, newS) => {
                 voiceCon.subscribe(audioPlayer)
                 audioPlayer.play(audioRes)
                 try {
-                    client.tts.set(getChan.id, getChan)
+                    client.tts.set(newS.id, { channel: getChan.id, command: "channel", author: newS.id })
                     getChan.send({ embeds: [new EmbedBuilder().setTitle(`TTS Auto-join system`).setDescription(`This bot just joined in <#${getChan.id}> because <@${newS.id}> joined.\n\nFrom the next message, this channel will be the TTS message input until the user leaves the channel.`).setColor("Blurple").setTimestamp()] })
                 } catch (error) {
                     console.log(error)

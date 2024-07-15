@@ -13,7 +13,17 @@ module.exports = {
         if (!checkUser) checkUser = new config({ userId: interaction.user.id }).save()
 
         const rowLang = new ActionRowBuilder()
-            .addComponents(new StringSelectMenuBuilder().setCustomId("language").addOptions({ label: `Spanish`, value: `es-ES`, emoji: `🇪🇸` }, { label: `English`, value: `en-US`, emoji: `🇺🇸` }, { label: `Portuguese`, value: `pt-BR`, emoji: `🇵🇹` }).setPlaceholder(`Select a language`))
+            .addComponents(
+                new StringSelectMenuBuilder()
+                    .setCustomId("language")
+                    .addOptions(
+                        { label: `Spanish`, value: `es-ES`, emoji: `🇪🇸` },
+                        { label: `English`, value: `en-US`, emoji: `🇺🇸` },
+                        { label: `Portuguese`, value: `pt-BR`, emoji: `🇵🇹` },
+                        { label: `Japanese`, value: `ja-JP`, emoji: `🇯🇵` },
+                        { label: `Russian`, value: `ru-RU`, emoji: `🇷🇺` },
+                    )
+                    .setPlaceholder(`Select a language`))
 
         const rowOption = new ActionRowBuilder()
             .addComponents(new ButtonBuilder().setCustomId("autojoin").setLabel("Auto-join").setStyle(await checkUser.joinWhenUserJoin == false ? ButtonStyle.Danger : ButtonStyle.Success)).addComponents(new ButtonBuilder().setCustomId("close").setLabel(`Close menu`).setStyle(ButtonStyle.Danger))
