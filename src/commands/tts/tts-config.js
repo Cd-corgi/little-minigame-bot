@@ -32,7 +32,7 @@ module.exports = {
 
         let filter = i => i.user.id == interaction.user.id
 
-        const collector = interaction.channel.createMessageComponentCollector({ filter, time: 250000, idle: 30000 })
+        const collector = interaction.channel.createMessageComponentCollector({ filter, time: 250000, idle: 15000 })
 
         collector.on("collect", async i => {
             await i?.deferUpdate();
@@ -63,6 +63,9 @@ module.exports = {
                     collector.resetTimer()
                     break;
             }
+        });
+        collector.on("end", () => {
+            return;
         })
     }
 }
