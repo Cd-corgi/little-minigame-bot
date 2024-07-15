@@ -1,6 +1,7 @@
 const dtts = require('discord-tts')
 const { VoiceConnectionStatus, joinVoiceChannel, entersState, createAudioResource, StreamType, AudioPlayer, getVoiceConnection } = require('@discordjs/voice')
-const playerConfig = require('../models/tts-config')
+const playerConfig = require('../models/tts-config');
+const { EmbedBuilder } = require('discord.js');
 
 module.exports = async (client, oldS, newS) => {
 
@@ -36,14 +37,15 @@ module.exports = async (client, oldS, newS) => {
                 audioPlayer.play(audioRes)
                 try {
                     client.tts.set(getChan.id, getChan)
+                    getChan.send({ embeds: [new EmbedBuilder().setTitle(`TTS Auto-join system`).setDescription(`This bot just joined in <#${getChan.id}> because <@${newS.id}> joined.\n\nFrom the next message, this channel will be the TTS message input until the user leaves the channel.`).setColor("Blurple").setTimestamp()] })
                 } catch (error) {
                     console.log(error)
                 }
             } else {
-                return
+                return;
             }
         }
-    }
+    } else if (oldS.channelId !== null && newS.channelId !== null) { return }
 
     if (oldS.channelId !== null && newS.channelId == null) {
         if (findUser) {

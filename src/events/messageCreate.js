@@ -5,19 +5,39 @@ const userConfig = require('../models/tts-config')
 
 module.exports = async (client, message) => {
     if (message.author.bot || !message.guild) return;
+
     let detectUser = await userConfig.findOne({ userId: message.author.id })
+
     if (!detectUser) return;
+
     const connection = getVoiceConnection(message.guild.id)
+
     if (!connection) return;
+
     const getOutPutChannel = client.tts.get(message.channel.id)
+
     if (!getOutPutChannel || getOutPutChannel.id !== message.channel.id) return;
+    
     try {
         const audioPlayer = new AudioPlayer()
-        var msg = await message.channel.messages.fetch()
-        var getMsg = msg.first().content;
-        getMsg = getMsg.replace(/<@[0-9]+>/gm, ".")
+
+        let msg = await message.channel.messages.fetch()
+        let getMsg = msg.first().content;
+
+        let regMention = /<@|>/gm
+
+        if (regMention.test(getMsg)) {
+            var getIds = getMsg.split(" ").filter((x) => x.includes("<@") && x.includes(">"))
+            for (let i = 0; i < getIds.length; i++) {
+                getIds[i] = getIds[i].replace(/<@|>/gm, "")
+                var fetchNames = await client.users.fetch(getIds[i])
+                getMsg = getMsg.replace(`<@${fetchNames.id}>`, fetchNames.username)
+            }
+        }
+
         let audioPrompt = dtts.getVoiceStream(`${message.author.username}. ${getMsg}`, detectUser.lang)
         let audioRes = createAudioResource(audioPrompt, { inputType: StreamType.Arbitrary, inlineVolume: true })
+
         connection.subscribe(audioPlayer)
         audioPlayer.play(audioRes)
     } catch (error) {
