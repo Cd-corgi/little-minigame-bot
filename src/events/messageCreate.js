@@ -24,13 +24,16 @@ module.exports = async (client, message) => {
 
         if (getOutPutChannel.command == "user") {
             let getMsg = msg.first();
+
             if (getMsg.author.id !== getOutPutChannel.author) return;
+
             getMsg = getMsg.content
 
             let regMention = /<@|>/gm
 
             if (regMention.test(getMsg)) {
                 var getIds = getMsg.split(" ").filter((x) => x.includes("<@") && x.includes(">"))
+                
                 for (let i = 0; i < getIds.length; i++) {
                     getIds[i] = getIds[i].replace(/<@|>/gm, "")
                     var fetchNames = await client.users.fetch(getIds[i])
